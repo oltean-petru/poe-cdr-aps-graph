@@ -3,7 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script type="text/javascript" src="https://fastly.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+    <script
+      type="text/javascript"
+      src="https://fastly.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"
+    ></script>
     <title>CDR APS Calculator</title>
     <style>
       body {
@@ -21,163 +24,164 @@
     </style>
     <script>
       window.onload = function () {
-  let c = 0.25;
-  let cdr = 0; // % inc
+        let c = 0.25;
+        let cdr = 0; // % inc
 
-  let data = [];
-  for (let aps = 1; aps <= 20; aps += 0.01) {
-    data.push({ x: aps, y: numberOfCasts(c, cdr, aps) });
-  }
+        let data = [];
+        for (let aps = 1; aps <= 20; aps += 0.01) {
+          data.push({ x: aps, y: numberOfCasts(c, cdr, aps) });
+        }
 
-  function numberOfCasts(c, cdr, aps) {
-    return (
-      aps /
-      (1 +
-        Math.floor((aps / 30) * Math.ceil(((30 / 0.99) * c) / (1 + cdr / 100))))
-    );
-  }
+        function numberOfCasts(c, cdr, aps) {
+          return (
+            aps / (1 +  Math.floor( (aps / 30) * Math.ceil(((30 / 0.99) * c) / (1 + cdr / 100))))
+          );
+        }
 
-  var dom = document.getElementById("container");
-  var chart = echarts.init(dom, null, {
-    renderer: "canvas",
-    useDirtyRect: false,
-  });
-  var app = {};
+        var dom = document.getElementById("container");
+        var chart = echarts.init(dom, null, {
+          renderer: "canvas",
+          useDirtyRect: false,
+        });
+        var app = {};
 
-  var option;
+        var option;
 
-  option = {
-    title: {
-      text: "Casts per second vs Attack Speed Breakpoints",
-    },
-    animationDuration: 10,
-    tooltip: {
-      trigger: "axis",
-      axisPointer: {
-        type: "line",
-        animation: false,
-        snap: true,
-      },
-      formatter: function (params) {
-        return `Attack Speed: ${
-          Math.round(params[0].value[0] * 100) / 100
-        }<br/>Casts per second: ${Math.round(params[0].value[1] * 100) / 100}`;
-      },
-    },
-    dataZoom: [
-      {
-        type: "slider",
-        xAxisIndex: 0,
-        filterMode: "none",
-      },
-      {
-        type: "slider",
-        yAxisIndex: 0,
-        filterMode: "none",
-      },
-      {
-        type: "inside",
-        xAxisIndex: 0,
-        filterMode: "none",
-      },
-      {
-        type: "inside",
-        yAxisIndex: 0,
-        filterMode: "none",
-      },
-    ],
-    xAxis: {
-      type: "value",
-      splitLine: {
-        show: true,
-      },
-      name: "Attacks per second",
-    },
-    yAxis: {
-      type: "value",
-      splitLine: {
-        show: true,
-      },
-      name: "Casts per second",
-      min: function (value) {
-        return (
-          Math.round((value.min - (value.max - value.min) * 0.1) * 10) / 10
-        );
-      },
-      max: function (value) {
-        return (
-          Math.round((value.max + (value.max - value.min) * 0.1) * 10) / 10
-        );
-      },
-    },
-    series: [
-      {
-        name: "Casts per second:",
-        type: "line",
-        showSymbol: false,
-        data: data.map((d) => [d.x, d.y]),
-      },
-    ],
-  };
+        option = {
+          title: {
+            text: "Casts per second vs Attack Speed Breakpoints",
+          },
+          animationDuration: 10,
+          tooltip: {
+            trigger: "axis",
+            axisPointer: {
+              type: "line",
+              animation: false,
+              snap: true,
+            },
+            formatter: function (params) {
+              return `Attack Speed: ${
+                Math.round(params[0].value[0] * 100) / 100
+              }<br/>Casts per second: ${
+                Math.round(params[0].value[1] * 100) / 100
+              }`;
+            },
+          },
+          dataZoom: [
+            {
+              type: "slider",
+              xAxisIndex: 0,
+              filterMode: "none",
+            },
+            {
+              type: "slider",
+              yAxisIndex: 0,
+              filterMode: "none",
+            },
+            {
+              type: "inside",
+              xAxisIndex: 0,
+              filterMode: "none",
+            },
+            {
+              type: "inside",
+              yAxisIndex: 0,
+              filterMode: "none",
+            },
+          ],
+          xAxis: {
+            type: "value",
+            splitLine: {
+              show: true,
+            },
+            name: "Attacks per second",
+          },
+          yAxis: {
+            type: "value",
+            splitLine: {
+              show: true,
+            },
+            name: "Casts per second",
+            min: function (value) {
+              return (
+                Math.round((value.min - (value.max - value.min) * 0.1) * 10) /
+                10
+              );
+            },
+            max: function (value) {
+              return (
+                Math.round((value.max + (value.max - value.min) * 0.1) * 10) /
+                10
+              );
+            },
+          },
+          series: [
+            {
+              name: "Casts per second:",
+              type: "line",
+              showSymbol: false,
+              data: data.map((d) => [d.x, d.y]),
+            },
+          ],
+        };
 
-  if (option && typeof option === "object") {
-    chart.setOption(option);
-  }
+        if (option && typeof option === "object") {
+          chart.setOption(option);
+        }
 
-  window.addEventListener("resize", chart.resize);
+        window.addEventListener("resize", chart.resize);
 
-  function generateData(c, cdr) {
-    let data = [];
-    for (let aps = 1; aps <= 20; aps += 0.01) {
-      data.push({
-        x: aps,
-        y: numberOfCasts(c, cdr, aps),
-      });
-    }
-    return data;
-  }
+        function generateData(c, cdr) {
+          let data = [];
+          for (let aps = 1; aps <= 20; aps += 0.01) {
+            data.push({
+              x: aps,
+              y: numberOfCasts(c, cdr, aps),
+            });
+          }
+          return data;
+        }
 
-  function updateDataAndRedraw() {
-    option.series.forEach((series) => {
-      series.data = generateData(c, cdr).map((d) => [d.x, d.y]);
-    });
+        function updateDataAndRedraw() {
+          option.series.forEach((series) => {
+            series.data = generateData(c, cdr).map((d) => [d.x, d.y]);
+          });
 
-    chart.setOption(option, true);
-  }
+          chart.setOption(option, true);
+        }
 
-  document
-    .getElementById("c-slider")
-    .addEventListener("input", function (event) {
-      c = parseFloat(event.target.value);
-      updateDataAndRedraw();
-    });
+        document
+          .getElementById("c-slider")
+          .addEventListener("input", function (event) {
+            c = parseFloat(event.target.value);
+            updateDataAndRedraw();
+          });
 
-  document
-    .getElementById("cdr-slider")
-    .addEventListener("input", function (event) {
-      cdr = parseInt(event.target.value, 10);
-      updateDataAndRedraw();
-    });
+        document
+          .getElementById("cdr-slider")
+          .addEventListener("input", function (event) {
+            cdr = parseInt(event.target.value, 10);
+            updateDataAndRedraw();
+          });
 
-  document
-    .getElementById("c-slider")
-    .addEventListener("input", function (event) {
-      c = parseFloat(event.target.value);
-      document.getElementById("c-value").textContent =
-        "Base cooldown (C): " + c;
-      updateDataAndRedraw();
-    });
+        document
+          .getElementById("c-slider")
+          .addEventListener("input", function (event) {
+            c = parseFloat(event.target.value);
+            document.getElementById("c-value").textContent =
+              "Base cooldown (C): " + c;
+            updateDataAndRedraw();
+          });
 
-  document
-    .getElementById("cdr-slider")
-    .addEventListener("input", function (event) {
-      cdr = parseInt(event.target.value, 10);
-      document.getElementById("cdr-value").textContent =
-        "Cooldown Reduction in % (CDR): " + cdr;
-      updateDataAndRedraw();
-    });
-};
-
+        document
+          .getElementById("cdr-slider")
+          .addEventListener("input", function (event) {
+            cdr = parseInt(event.target.value, 10);
+            document.getElementById("cdr-value").textContent =
+              "Cooldown Reduction in % (CDR): " + cdr;
+            updateDataAndRedraw();
+          });
+      };
     </script>
   </head>
   <body>
@@ -210,7 +214,6 @@
     </div>
     <div id="container">
       <canvas id="chart"></canvas>
-
     </div>
   </body>
 </html>
